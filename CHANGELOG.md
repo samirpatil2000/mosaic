@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Carousel mode**: 3D tab switcher (Alt+W) with perspective-skewed side cards (rotateY ±35°), smooth rotation transitions, and wrapping navigation for infinite scroll feel
+- **Context strip**: horizontal row of small thumbnails below the carousel with favicons above each, selected item highlighted, smooth scroll tracking
+- **Tab info bar**: favicon, title, domain, and position counter structurally attached below the center carousel card
+- **Cross-mode switching**: Alt+W in grid switches to carousel, Alt+Q in carousel switches to grid — navigates the same tab instead of closing/reopening
+- **Carousel fuzzy search**: same Fuse.js configuration as grid view; typing focuses the SearchBar, arrows navigate filtered results
+- **Animation queue**: rapid key presses during carousel transitions queued in FIFO order, processed sequentially
+- **FaviconImage shared component**: extracted from TabCard to `src/overview/FaviconImage.tsx`, shared by grid and carousel
 - **Tab-based overview**: opens as a regular browser tab instead of a popup window; auto-closes when you navigate away (Ctrl+T, tab switch, Alt+Tab)
 - **Immediate keyboard search**: typing anywhere focuses the search input instantly — no Ctrl+F needed; arrow keys at text boundaries seamlessly transition between input and grid
 - **New keyboard shortcuts**: Delete (close tab), Insert (new tab after current), Home/End (first/last tab), PageUp/PageDown (move left/right)
@@ -23,7 +30,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Service worker refactored**: single `openMode()` function handles both grid and carousel with cross-mode switching logic
 - **Default shortcut**: Alt+Q (Windows/Linux), Ctrl+Q (Mac) — behavioral nudge from Alt+Tab muscle memory
+- **Carousel shortcut**: Alt+W (Windows/Linux), Ctrl+W (Mac)
 - **Single click to open**: clicking a tab card opens it immediately instead of select-then-click
 - **Selection visual treatment**: replaced blue ring with subtle white border, surface brightness lift, shadow only on selected card, and controlled scale overshoot (backOut easing)
 - **Thumbnail capture**: stored at full native resolution (no downscaling); cache keyed by tab ID instead of URL
@@ -40,6 +49,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Text jitter during scale animations (GPU compositing fix)
 - Brightness/filter flash on initial render (framer-motion initial state matching)
 - "No tabs found" flash before initial tab load completes
+- Empty selection after deleting the last tab in the grid (selectedIndex now clamped)
+- "Tabs cannot be edited right now" error on visibilitychange (wrapped in try/catch with retry)
 
 ### Performance
 

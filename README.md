@@ -9,8 +9,9 @@ A fast, keyboard-driven tab overview for your browser. Find, manage, and switch 
 ## ✨ Features
 
 - **Tab-Based Overview:** Opens as a regular browser tab (not a popup) and auto-closes when you navigate away, switch tabs, or Alt+Tab out.
+- **Carousel Mode:** A 3D tab switcher inspired by Windows Alt+Tab — perspective-skewed side cards, smooth rotation transitions, and a context strip with favicons for quick orientation.
 - **Live Thumbnails:** Full-resolution preview thumbnails captured automatically — no downscaling, no blur.
-- **Lightning-Fast Search:** Fuzzy search by title or URL. Just start typing anywhere — the search bar focuses instantly, no Ctrl+F needed.
+- **Lightning-Fast Search:** Fuzzy search by title or URL in both grid and carousel views. Just start typing anywhere — the search bar focuses instantly, no Ctrl+F needed.
 - **Keyboard-First Navigation:** Arrow keys to move, Enter to switch, Escape to close. Delete to close a tab, Insert to open a new one, Home/End to jump to first/last, PageUp/PageDown to shift left/right.
 - **Content-Driven Adaptive Grid:** Layout scales based on tab count — cards grow to fill available space while maintaining aspect ratio, mathematically guaranteed to never overflow.
 - **Sliding Window:** Up to 18 tabs visible at once (3×6). The window slides to stay centered on the selected tab, with a position indicator for large tab counts.
@@ -18,6 +19,7 @@ A fast, keyboard-driven tab overview for your browser. Find, manage, and switch 
 - **Tab Management:** Close tabs directly from the overview. Single click to open — no double-click needed.
 - **Unified Selection Model:** Mouse hover and keyboard navigation share the same selection state. One model, two input methods.
 - **In-Memory Thumbnail Cache:** `Map` layer above IndexedDB with batch prefetch for zero-flash initial render.
+- **Cross-Mode Switching:** Alt+W while in grid switches to carousel; Alt+Q while in carousel switches to grid. Same shortcut toggles off.
 - **Modern UI/UX:** React 19, Tailwind CSS, Framer Motion. Subtle visual treatment — selected card gets a white border, brightness lift, and shadow; unselected thumbnails desaturate gently.
 
 ## 🖼️ Screenshots And Demo
@@ -32,8 +34,9 @@ https://github.com/user-attachments/assets/08a8f47d-d7fe-4076-a6d6-1242ffcd1721
 
 | Action | Shortcut |
 |---|---|
-| Open Overview | `Alt+Q` (Windows/Linux) · `Ctrl+Q` (Mac) |
-| Navigate Grid | Arrow Keys (`↑` `↓` `←` `→`) |
+| Open Grid Overview | `Alt+Q` (Windows/Linux) · `Ctrl+Q` (Mac) |
+| Open Carousel | `Alt+W` (Windows/Linux) · `Ctrl+W` (Mac) |
+| Navigate | Arrow Keys (`↑` `↓` `←` `→`) |
 | Switch to Tab | `Enter` or single-click |
 | Close Tab | `Delete`, or hover + click `X` |
 | New Tab (after current) | `Insert` |
@@ -41,6 +44,7 @@ https://github.com/user-attachments/assets/08a8f47d-d7fe-4076-a6d6-1242ffcd1721
 | Move Left / Right | `PageUp` / `PageDown` |
 | Search | Start typing anywhere |
 | Dismiss | `Escape`, or press the open shortcut again |
+| Switch View | Press the other view's shortcut while open |
 
 > [!TIP]
 > You can customize all shortcuts — including the one for opening the overview — at `chrome://extensions/shortcuts`, or by clicking the redirect icon inside the Mosaic window.

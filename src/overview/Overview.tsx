@@ -231,7 +231,14 @@ export function Overview() {
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'hidden') {
         chrome.tabs.getCurrent((tab) => {
-          if (tab?.id) chrome.tabs.remove(tab.id);
+          if (tab?.id) {
+            chrome.tabs.remove(tab.id).catch(() => {
+              // Retry after a short delay — Chrome may reject during tab transitions
+              setTimeout(() => {
+                chrome.tabs.remove(tab.id!).catch(() => {});
+              }, 100);
+            });
+          }
         });
       }
     };
@@ -363,6 +370,14 @@ export function Overview() {
     window.close();
   }, []);
 
+  // Clamp selectedIndex when tabs are removed
+  useEffect(() => {
+    if (filteredTabs.length === 0) return;
+    if (selectedIndex >= filteredTabs.length) {
+      setSelectedIndex(filteredTabs.length - 1);
+    }
+  }, [filteredTabs.length, selectedIndex]);
+
   // Keyboard navigation operates on the FULL filteredTabs list
   useKeyboardNavigation({
     totalItems: filteredTabs.length,
@@ -467,7 +482,7 @@ export function Overview() {
           <div ref={gridContainerRef} className={`flex-1 flex justify-center overflow-hidden ${rows > 1 ? 'items-center' : 'items-start'}`}>
             <Grid
               ref={gridRef}
-              className="outline-none scrollbar-hide !overflow-hidden"
+              className="outline-none scrollbar-hide overflow-hidden!"
               columnCount={columns}
               columnWidth={columnWidth}
               rowCount={rows}

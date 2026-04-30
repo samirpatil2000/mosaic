@@ -36,6 +36,13 @@
         "mac": "MacCtrl+Q"
       },
       "description": "Open Mosaic Overview"
+    },
+    "open-carousel": {
+      "suggested_key": {
+        "default": "Alt+W",
+        "mac": "MacCtrl+W"
+      },
+      "description": "Open Carousel Tab Switcher"
     }
   }
 }

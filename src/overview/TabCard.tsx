@@ -2,7 +2,8 @@ import { memo, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import type { TabInfo } from '../lib/tabManager';
 import { getThumbnail, getThumbnailSync } from '../lib/thumbnailCache';
-import { X, Globe } from 'lucide-react';
+import { X } from 'lucide-react';
+import { FaviconImage } from './FaviconImage';
 
 interface TabCardProps {
   tab: TabInfo;
@@ -16,44 +17,6 @@ interface TabCardProps {
   isEnterAnim?: boolean;
   enterDelay?: number;
 }
-
-const getFaviconUrl = (u: string, size: number) => {
-  const url = new URL(chrome.runtime.getURL('/_favicon/'));
-  url.searchParams.set('pageUrl', u);
-  url.searchParams.set('size', size.toString());
-  return url.toString();
-};
-
-const FaviconImage = ({ pageUrl, originalSrc, className, fallbackClassName, fallbackSize, maxDisplaySize }: { pageUrl?: string, originalSrc?: string, className: string, fallbackClassName: string, fallbackSize: number, maxDisplaySize?: number }) => {
-  const [errorCount, setErrorCount] = useState(0);
-  
-  let srcToTry;
-  if (errorCount === 0 && pageUrl) {
-    srcToTry = getFaviconUrl(pageUrl, 32);
-  } else if (errorCount <= 1 && originalSrc) {
-    srcToTry = originalSrc;
-  }
-
-  if (!srcToTry) {
-    return <Globe size={fallbackSize} className={fallbackClassName} />;
-  }
-  
-  // Render at a fixed CSS size that won't exceed the icon's native resolution.
-  // 32 physical pixels / dpr = CSS pixels. This prevents upscale blur.
-  const dpr = window.devicePixelRatio || 1;
-  const nativeCssSize = Math.round(32 / dpr);
-  const displaySize = maxDisplaySize ? Math.min(maxDisplaySize, nativeCssSize) : nativeCssSize;
-
-  return (
-    <img
-      src={srcToTry}
-      className={className}
-      style={{ width: displaySize, height: displaySize, imageRendering: 'auto' }}
-      alt=""
-      onError={() => setErrorCount(c => c + 1)}
-    />
-  );
-};
 
 /*
  * All footer dimensions use the CSS custom property --s (the scale factor).
@@ -148,7 +111,7 @@ export const TabCard = memo(({ tab, isSelected, style, uiScale = 1, columnWidth 
           filter: { type: "tween", duration: 0.15, ease: "easeOut" },
           boxShadow: { type: "tween", duration: 0.08, ease: "easeOut" }
         }}
-        className={`relative flex flex-col h-full rounded-[14px] overflow-hidden cursor-pointer group transition-[opacity,filter] duration-320 select-none will-change-transform [backface-visibility:hidden] ${isSelected ? 'bg-[#282828]' : 'bg-[#1e1e1e]'}`}
+        className={`relative flex flex-col h-full rounded-[14px] overflow-hidden cursor-pointer group transition-[opacity,filter] duration-320 select-none will-change-transform backface-hidden ${isSelected ? 'bg-[#282828]' : 'bg-[#1e1e1e]'}`}
       >
         {/* Close Button */}
         <button

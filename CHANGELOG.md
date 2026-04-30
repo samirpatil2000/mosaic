@@ -51,7 +51,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
-- `yarn.lock` (using npm with `--legacy-peer-deps` for react-window React 19 compatibility)
+- `yarn.lock` — consolidated on npm to simplify the dev workflow; using `--legacy-peer-deps` for react-window React 19 compatibility
 - Ctrl+W shortcut (browser-reserved, was closing the extension tab)
 - Thumbnail downscaling (was causing blurry images at larger card sizes)
 

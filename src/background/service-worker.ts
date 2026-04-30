@@ -2,45 +2,77 @@ import { captureTabById } from '../lib/thumbnailCache';
 
 let lastToggleTime = 0;
 
-async function openOverview() {
+/**
+ * Open the overview in the given mode, or toggle/switch if already open.
+ * - If no overview tab exists: open in the requested mode
+ * - If an overview tab exists in the SAME mode: close it (toggle off)
+ * - If an overview tab exists in a DIFFERENT mode: navigate it to the new mode (switch)
+ */
+async function openMode(targetMode: 'grid' | 'carousel') {
   const now = Date.now();
-  if (now - lastToggleTime < 500) return; // Debounce triggers
+  if (now - lastToggleTime < 500) return;
   lastToggleTime = now;
 
   const overviewUrl = chrome.runtime.getURL("overview/index.html");
-  
-  // Check if an overview tab already exists in any window (match with or without query params)
-  const tabs = await chrome.tabs.query({ url: overviewUrl + '*' });
+  const existingTabs = await chrome.tabs.query({ url: overviewUrl + '*' });
 
-  if (tabs.length > 0 && tabs[0].id) {
-    // Toggle: close the existing overview tab
+  if (existingTabs.length > 0 && existingTabs[0].id) {
+    const existingTab = existingTabs[0];
+    const existingUrl = existingTab.url || '';
+    const existingMode = existingUrl.includes('mode=carousel') ? 'carousel' : 'grid';
+
+    if (existingMode === targetMode) {
+      // Same mode — toggle off (close)
+      try {
+        await chrome.tabs.remove(existingTab.id!);
+      } catch (e) {
+        console.error('Failed to close tab:', e);
+      }
+      return;
+    }
+
+    // Different mode — switch by navigating the existing tab
+    const fromParam = new URL(existingUrl).searchParams.get('from');
+    let newUrl = overviewUrl;
+    if (targetMode === 'carousel') {
+      newUrl += fromParam ? `?mode=carousel&from=${fromParam}` : '?mode=carousel';
+    } else {
+      newUrl += fromParam ? `?from=${fromParam}` : '';
+    }
+
     try {
-      await chrome.tabs.remove(tabs[0].id);
+      await chrome.tabs.update(existingTab.id!, { url: newUrl, active: true });
     } catch (e) {
-      console.error('Failed to close tab:', e);
+      console.error('Failed to switch mode:', e);
     }
     return;
   }
 
-  // Find the currently active tab before opening the overview
+  // No existing tab — open fresh
   const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
   const sourceTabId = activeTab?.id;
 
-  // Open as a regular maximized tab, passing the source tab ID
-  const url = sourceTabId
-    ? `${overviewUrl}?from=${sourceTabId}`
-    : overviewUrl;
+  let url = overviewUrl;
+  if (targetMode === 'carousel') {
+    url += sourceTabId ? `?mode=carousel&from=${sourceTabId}` : '?mode=carousel';
+  } else {
+    url += sourceTabId ? `?from=${sourceTabId}` : '';
+  }
+
   chrome.tabs.create({ url, active: true });
 }
 
 chrome.commands.onCommand.addListener((command) => {
   if (command === '_execute_action' || command === 'open-overview') {
-    openOverview();
+    openMode('grid');
+  }
+  if (command === 'open-carousel') {
+    openMode('carousel');
   }
 });
 
 chrome.action.onClicked.addListener(() => {
-  openOverview();
+  openMode('grid');
 });
 
 // Capture thumbnail when a tab finishes loading

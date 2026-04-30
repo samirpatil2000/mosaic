@@ -4,7 +4,8 @@
   "version": "1.2.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite build --watch",
+    "dev:ext": "npx web-ext run --source-dir ./dist --target chromium --start-url chrome://extensions",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -38,6 +39,7 @@
     "tailwindcss": "^4.2.1",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.56.1",
-    "vite": "^5.4.21"
+    "vite": "^5.4.21",
+    "web-ext": "^10.1.0"
   }
 }
